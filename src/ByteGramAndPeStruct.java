@@ -1,5 +1,3 @@
-import org.python.core.PyString;
-
 import java.io.*;
 import java.util.*;
 
@@ -8,17 +6,6 @@ public class ByteGramAndPeStruct {
     int num = 0;
     Map<String, Integer> map = new HashMap<String, Integer>();
     Map<String, Integer> singleMap = new HashMap<String, Integer>();
-    private PeStructIml peFile;
-
-    public ByteGramAndPeStruct() {
-        try {
-            PeStruct factory = new PeStruct();
-            peFile = factory.create();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
 
     public boolean isLoadDict() {
         return !map.isEmpty();
@@ -174,20 +161,15 @@ public class ByteGramAndPeStruct {
     }
 
     public String createFeature(String filename) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         // pe结构特征
-        String pe = peFile.createPEarff(new PyString(filename));
-        if (pe == null || pe.isEmpty()) {
-            result += "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
-                    + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
-                    + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
-                    + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
-                    + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
-                    + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
-                    + "0,0,0,0,0,0,0,0,0,";
-        } else {
-            result += pe;
-        }
+//        String pe = peFile.createPEarff(new PyString(filename));
+//        if (pe == null || pe.isEmpty()) {
+        result.append("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," + "0,0,0,0,0,0,0,0,0,");
+//        } else {
+//            result.append(pe);
+//        }
+        System.out.println("result" + result);
         // gram
         try {
             File file = new File(filename);
@@ -247,14 +229,14 @@ public class ByteGramAndPeStruct {
 
                 long tfidf = Math.round((tf / maxcount) * Math.log(num / (1 + df)) * 10000000);
                 // System.out.println(tf+"->"+df+"->"+key+"->"+tfidf);
-                result = result + tfidf + ",";
+                result.append(tfidf).append(",");
             }
         } catch (IOException e) {
             e.printStackTrace();
             return "";
         }
 
-        return result;
+        return result.toString();
     }
 
     public String createHeader() {

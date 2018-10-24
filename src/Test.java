@@ -30,7 +30,7 @@ public class Test {
             }
         }
 
-        // 统计3-grams的没种序列出现的次数
+        // 统计3-grams的每种序列出现的次数
         Map<String, Integer> singleMap = new HashMap<>();
 
         int maxcount = 0;
