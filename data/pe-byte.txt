@@ -1,0 +1,45 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.trees.RandomForest -I 100 -K 0 -S 1 -num-slots 1
+Relation:     malware
+Instances:    22848
+Attributes:   5701
+              [list of attributes omitted]
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+Random forest of 100 trees, each constructed while considering 13 random features.
+Out of bag error: 0.0021
+
+
+
+Time taken to build model: 22.08 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances       22810               99.8337 %
+Incorrectly Classified Instances        38                0.1663 %
+Kappa statistic                          0.9966
+Mean absolute error                      0.0217
+Root mean squared error                  0.0584
+Relative absolute error                  4.4646 %
+Root relative squared error             11.837  %
+Coverage of cases (0.95 level)          99.9956 %
+Mean rel. region size (0.95 level)      55.4381 %
+Total Number of Instances            22848     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.999    0.003    0.998      0.999    0.999      0.997    1.000     1.000     malware
+                 0.997    0.001    0.999      0.997    0.998      0.997    1.000     1.000     benign
+Weighted Avg.    0.998    0.002    0.998      0.998    0.998      0.997    1.000     1.000     
+
+=== Confusion Matrix ===
+
+     a     b   <-- classified as
+ 13247    10 |     a = malware
+    28  9563 |     b = benign
+
