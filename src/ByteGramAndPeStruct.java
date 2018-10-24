@@ -169,7 +169,7 @@ public class ByteGramAndPeStruct {
 //        } else {
 //            result.append(pe);
 //        }
-        System.out.println("result" + result);
+
         // gram
         try {
             File file = new File(filename);
@@ -217,6 +217,7 @@ public class ByteGramAndPeStruct {
             }
             in.close();
             Iterator it = map.keySet().iterator();
+
             while (it.hasNext()) {
                 String key = (String) it.next();
                 if (key.equals("number"))
@@ -227,6 +228,7 @@ public class ByteGramAndPeStruct {
                 double df = map.get(key);
                 // System.out.println(tf+"->"+df);
 
+//                long tfidf = Math.round((tf / file.length()) * Math.log(num / (1 + df)) * 10000000);
                 long tfidf = Math.round((tf / maxcount) * Math.log(num / (1 + df)) * 10000000);
                 // System.out.println(tf+"->"+df+"->"+key+"->"+tfidf);
                 result.append(tfidf).append(",");

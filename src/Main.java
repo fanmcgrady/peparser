@@ -11,7 +11,8 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         String model = "data/pe_byte.model";
-        String sample = "data/Backdoor.Win32.Hupigon.zay";
+        String sample = "data/samples/write.exe";
+//        String sample = "data/Backdoor.Win32.Hupigon.zay";
         Classifier clss = (Classifier) weka.core.SerializationHelper.read(model);
 
         ByteGramAndPeStruct byte_pe = new ByteGramAndPeStruct();
