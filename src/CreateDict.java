@@ -28,10 +28,11 @@ public class CreateDict {
     public void createDict() throws Exception {
         String[] path = new String[]{beniPath, malPath};
         for (int i = 0; i < path.length; i++) {
-            System.out.println(i);
             File root = new File(path[i]);
             File[] files = root.listFiles();
+            int count = 0;
             for (File file : files) {
+                System.out.println(count++);
                 DataInputStream in = new DataInputStream(new FileInputStream(file));
                 byte temp = 0;
                 String first = "", second = "", third = "", skey = "";
