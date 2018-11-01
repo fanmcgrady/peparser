@@ -40,7 +40,7 @@ start() {
 		mkdir ./logs
 	fi
 
-	java -server -Xmx2048M -cp $cp com.pe.PEServer >> ./logs/stdout.log 2>&1 &
+	java -server -Xmx2048M -cp $cp MyTest >> ./logs/stdout.log 2>&1 &
 	echo $! > epcc.pid
 }
 
