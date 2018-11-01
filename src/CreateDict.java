@@ -28,6 +28,7 @@ public class CreateDict {
     public void createDict() throws Exception {
         String[] path = new String[]{beniPath, malPath};
         for (int i = 0; i < path.length; i++) {
+            System.out.println(i);
             File root = new File(path[i]);
             File[] files = root.listFiles();
             for (File file : files) {
