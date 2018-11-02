@@ -193,7 +193,9 @@ public class CreateDict {
 
         Iterator<Map.Entry<String, Integer>> it = map.entrySet().iterator();
         int max = 0;
+        int count = 0;
         while (it.hasNext()) {
+            System.out.println(count++);
             Map.Entry<String, Integer> entry = it.next();
             if (max < entry.getValue()) {
                 max = entry.getValue();
