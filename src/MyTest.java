@@ -9,8 +9,8 @@ public class MyTest {
         int threadhold = 10;
         CreateDict temp = new CreateDict(beniPath, malPath, threadhold);
 //        temp.createDict();
-//        temp.calDistribution("benign_dic.json");
-        temp.calDistribution("malicious_dic.json");
+        temp.calDistribution("benign_dic.json");
+//        temp.calDistribution("malicious_dic.json");
 //        temp.getDict("benign_dic");
 //        temp.getDict("malicious_dic.json");
     }

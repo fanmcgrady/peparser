@@ -202,13 +202,17 @@ public class CreateDict {
         Iterator<Map.Entry<String, Integer>> it = map.entrySet().iterator();
         int max = 0;
         int count = 0;
+        int all = 0;
         while (it.hasNext()) {
             count++;
 
             Map.Entry<String, Integer> entry = it.next();
             int value = entry.getValue();
             int pos = value/1000;
-            distribution[pos]++;
+            if(pos<99){
+                distribution[pos]++;
+                all++;
+            }
             if (max < value) {
                 max = value;
             }
@@ -218,7 +222,7 @@ public class CreateDict {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
         BufferedWriter bw = null;
-        File f = new File("statistics/" +"malicious-"+df.format(new Date()) + ".txt");
+        File f = new File("statistics/" +"benign-"+df.format(new Date()) + ".txt");
         try {
             if (!f.exists()) {
                 f.createNewFile();
@@ -236,6 +240,7 @@ public class CreateDict {
                 bw.write(i*1000+"~"+(i+1)*1000+": "+distribution[i]+"\n");
             }
         }
+        bw.write("number of consideraion = "+ all);
         bw.close();
         return max;
     }
