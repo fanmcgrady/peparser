@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.io.FileUtils;
 import java.util.Map;
+import java.io.File;
 
 public class CreateDict {
     int threshold = 0;
@@ -24,7 +25,11 @@ public class CreateDict {
     String beniPath = "";
     String malPath = "";
 
+    String date = "";
+
     CreateDict(String beniPath, String malPath, int threashold) {
+//        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
+//        date = df.format(new Date());
         this.beniPath = beniPath;
         this.malPath = malPath;
         this.threshold = threashold;
@@ -189,22 +194,49 @@ public class CreateDict {
 
         map = (Map) JSONObject.parse(jsonContent);
 
-//        int distribution[] = new int[];
+        int distribution[] = new int[100];
+        for(int i=0;i<distribution.length;i++){
+            distribution[i]=0;
+        }
 
         Iterator<Map.Entry<String, Integer>> it = map.entrySet().iterator();
         int max = 0;
         int count = 0;
         while (it.hasNext()) {
             count++;
-//            if (count%1000 ==0){
-//                System.out.println(count);
-//            }
+
             Map.Entry<String, Integer> entry = it.next();
-            if (max < entry.getValue()) {
-                max = entry.getValue();
+            int value = entry.getValue();
+            int pos = value/1000;
+            distribution[pos]++;
+            if (max < value) {
+                max = value;
             }
         }
-        System.out.println("count = "+count);
+
+
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        BufferedWriter bw = null;
+        File f = new File("statistics/" +"malicious-"+df.format(new Date()) + ".txt");
+        try {
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            FileWriter fw = new FileWriter(f.getAbsoluteFile());
+            bw = new BufferedWriter(fw);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        bw.write("count = "+count+"\n");
+        bw.write("max = "+max+"\n");
+
+        for (int i =0;i<distribution.length;i++){
+            if(distribution[i]!=-1){
+                bw.write(i*1000+"~"+(i+1)*1000+": "+distribution[i]+"\n");
+            }
+        }
+        bw.close();
         return max;
     }
 
