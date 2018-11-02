@@ -4,11 +4,13 @@ import java.util.Map;
 
 public class MyTest {
     public static void main(String[] args) throws Exception {
-        String beniPath = "data/samples/benign";
-        String malPath = "data/samples/malicious";
+        String beniPath = "data/samples/benign_small";
+        String malPath = "data/samples/malicious_small";
         int threadhold = 10;
         CreateDict temp = new CreateDict(beniPath, malPath, threadhold);
-        temp.createDict();
+//        temp.createDict();
+        System.out.println(temp.calMax("benign_dic.json"));
+        System.out.println(temp.calMax("malicious_dic.json"));
 //        temp.getDict("benign_dic");
 //        temp.getDict("malicious_dic.json");
     }

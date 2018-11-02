@@ -1,10 +1,15 @@
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.io.FileUtils;
+import java.util.Map;
 
 public class CreateDict {
     int threshold = 0;
@@ -78,8 +83,25 @@ public class CreateDict {
                 in.close();
             }
         }
-        filter();
+
+//        filter();
         saveDict();
+    }
+
+    public void statistics () throws Exception{
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        BufferedWriter bw = null;
+        File file = new File("statistics/" + df.format(new Date()) + ".txt");
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            bw = new BufferedWriter(fw);
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void filter() {
@@ -121,7 +143,7 @@ public class CreateDict {
 
     public void saveDict() throws Exception {
         File file = new File(beniName);
-        if(!file.exists()){
+        if (!file.exists()) {
             file.createNewFile();
         }
         String beniJson = JSONObject.toJSONString(beniMap);
@@ -132,7 +154,7 @@ public class CreateDict {
         out.close();
 
         File file2 = new File(malName);
-        if(!file2.exists()){
+        if (!file2.exists()) {
             file2.createNewFile();
         }
         String malJson = JSONObject.toJSONString(malMap);
@@ -142,34 +164,42 @@ public class CreateDict {
         out2.write(malJson);
         out2.close();
 
-//        System.out.println(beniJson);
-//        ObjectOutputStream beniOut = new ObjectOutputStream(new FileOutputStream(beniName));
-//        beniOut.writeObject(beniMap); //
-//        System.out.println("beniMap has been written..");
-//        beniOut.close();
-//
-//        ObjectOutputStream malOut = new ObjectOutputStream(new FileOutputStream(malName));
-//        malOut.writeObject(malMap); //
-//        System.out.println("malMap has been written..");
-//        malOut.close();
     }
 
     public void getDict(String filename) throws Exception {
-        File file=new File(filename);
-        String jsonContent = FileUtils.readFileToString(file,"UTF-8");
-        System.out.println(jsonContent);
+        File file = new File(filename);
+        String jsonContent = FileUtils.readFileToString(file, "UTF-8");
+//        System.out.println(jsonContent);
 
         map = (Map) JSONObject.parse(jsonContent);
-        System.out.println(map);
-        System.out.println(malMap);
 
-        Iterator<Map.Entry<String, Integer>> malIt = malMap.entrySet().iterator();
-        while (malIt.hasNext()) {
-            Map.Entry<String, Integer> entry = malIt.next();
-            if (map.containsKey(entry.getKey())){
-                System.out.println("exist");
+//        Iterator<Map.Entry<String, Integer>> it = map.entrySet().iterator();
+//        int max = 0;
+//        while (it.hasNext()) {
+//            Map.Entry<String, Integer> entry = it.next();
+//            if (max < entry.getValue()) {
+//                max = entry.getValue();
+//            }
+//        }
+    }
+
+    public int calDistribution(String filename) throws Exception {
+        File file = new File(filename);
+        String jsonContent = FileUtils.readFileToString(file, "UTF-8");
+
+        map = (Map) JSONObject.parse(jsonContent);
+
+//        int distribution[] = new int[];
+
+        Iterator<Map.Entry<String, Integer>> it = map.entrySet().iterator();
+        int max = 0;
+        while (it.hasNext()) {
+            Map.Entry<String, Integer> entry = it.next();
+            if (max < entry.getValue()) {
+                max = entry.getValue();
             }
         }
+        return max;
     }
 
     public boolean shouldRemove(int value1, int value2) {
