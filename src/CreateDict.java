@@ -1,22 +1,24 @@
 import java.io.*;
+import java.util.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.io.FileUtils;
-import java.util.Map;
+
 import java.io.File;
 
 public class CreateDict {
     int threshold = 0;
+    int number = 215;
+    int count = 1000;
 
     Map<String, Integer> beniMap = new HashMap<String, Integer>();
     Map<String, Integer> malMap = new HashMap<String, Integer>();
+    Map<String, Integer> singleMap = new HashMap<String, Integer>();
     Map<String, Integer> map = new HashMap<String, Integer>();
 
     String beniName = "benign_dic.json";
@@ -25,11 +27,7 @@ public class CreateDict {
     String beniPath = "";
     String malPath = "";
 
-    String date = "";
-
     CreateDict(String beniPath, String malPath, int threashold) {
-//        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
-//        date = df.format(new Date());
         this.beniPath = beniPath;
         this.malPath = malPath;
         this.threshold = threashold;
@@ -45,6 +43,7 @@ public class CreateDict {
                 System.out.println(count++);
                 DataInputStream in = new DataInputStream(new FileInputStream(file));
                 byte temp = 0;
+                singleMap.clear();
                 String first = "", second = "", third = "", skey = "";
                 int j = 0;
 
@@ -70,43 +69,28 @@ public class CreateDict {
                         third = str;
                     }
                     skey = first + second + third;
-                    if (i == 0) {
-                        if (!beniMap.containsKey(skey)) {
-                            beniMap.put(skey, 1);
+                    if (!singleMap.containsKey(skey)) {
+                        singleMap.put(skey,1);
+                        if (i == 0) {
+                            if (!beniMap.containsKey(skey)) {
+                                beniMap.put(skey, 1);
+                            } else {
+                                beniMap.put(skey, beniMap.get(skey) + 1);
+                            }
                         } else {
-                            beniMap.put(skey, beniMap.get(skey) + 1);
-                        }
-                    } else {
-                        if (!malMap.containsKey(skey)) {
-                            malMap.put(skey, 1);
-                        } else {
-                            malMap.put(skey, malMap.get(skey) + 1);
+                            if (!malMap.containsKey(skey)) {
+                                malMap.put(skey, 1);
+                            } else {
+                                malMap.put(skey, malMap.get(skey) + 1);
+                            }
                         }
                     }
-
                 }
                 in.close();
             }
         }
-
-//        filter();
+        filter();
         saveDict();
-    }
-
-    public void statistics () throws Exception{
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
-        BufferedWriter bw = null;
-        File file = new File("statistics/" + df.format(new Date()) + ".txt");
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            bw = new BufferedWriter(fw);
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void filter() {
@@ -129,22 +113,63 @@ public class CreateDict {
                     }
                 }
             } else {
-                if (shouldRemove(beniValue, 0)) {
-                    beniIt.remove();
-                }
+//                if (shouldRemove(beniValue, 0)) {
+//                    beniIt.remove();
+//                }
             }
         }
 
         Iterator<Map.Entry<String, Integer>> malIt = malMap.entrySet().iterator();
-        while (malIt.hasNext()) {
-            Map.Entry<String, Integer> entry = malIt.next();
-            String key = (String) entry.getKey();
-            if (malMap.get(key) < threshold) {
-                malIt.remove();
-            }
+//        while (malIt.hasNext()) {
+//            Map.Entry<String, Integer> entry = malIt.next();
+//            String key = (String) entry.getKey();
+//            if (shouldRemove(malMap.get(key),0)) {
+//                malIt.remove();
+//            }
+//        }
 
+        try {
+            List<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(beniMap.entrySet());
+            Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+                public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                    return (o2.getValue() - o1.getValue());
+                }
+            });
+
+            beniMap.clear();
+            // 排序�?
+            for (int i = 0; i < count; i++) {
+                String id = list.get(i).toString();
+                String tmp[] = id.split("=");
+                beniMap.put(tmp[0], new Integer(tmp[1]));
+                // System.out.println(id);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            List<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(malMap.entrySet());
+            Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+                public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                    return (o2.getValue() - o1.getValue());
+                }
+            });
+
+            malMap.clear();
+            // 排序�?
+            for (int i = 0; i < count; i++) {
+                String id = list.get(i).toString();
+                String tmp[] = id.split("=");
+                malMap.put(tmp[0], new Integer(tmp[1]));
+                // System.out.println(id);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
+
 
     public void saveDict() throws Exception {
         File file = new File(beniName);
@@ -174,55 +199,44 @@ public class CreateDict {
     public void getDict(String filename) throws Exception {
         File file = new File(filename);
         String jsonContent = FileUtils.readFileToString(file, "UTF-8");
-//        System.out.println(jsonContent);
-
         map = (Map) JSONObject.parse(jsonContent);
-
-//        Iterator<Map.Entry<String, Integer>> it = map.entrySet().iterator();
-//        int max = 0;
-//        while (it.hasNext()) {
-//            Map.Entry<String, Integer> entry = it.next();
-//            if (max < entry.getValue()) {
-//                max = entry.getValue();
-//            }
-//        }
     }
 
-    public int calDistribution(String filename) throws Exception {
+    public int statistics(String filename, String type) throws Exception {
         File file = new File(filename);
         String jsonContent = FileUtils.readFileToString(file, "UTF-8");
 
         map = (Map) JSONObject.parse(jsonContent);
 
-        int distribution[] = new int[100];
-        for(int i=0;i<distribution.length;i++){
-            distribution[i]=0;
+        int distribution[] = new int[number+1];
+        for (int i = 0; i < distribution.length; i++) {
+            distribution[i] = 0;
         }
 
         Iterator<Map.Entry<String, Integer>> it = map.entrySet().iterator();
         int max = 0;
         int count = 0;
-        int all = 0;
+        int countInStatistics = 0;
+        int length = 0;
         while (it.hasNext()) {
             count++;
 
             Map.Entry<String, Integer> entry = it.next();
             int value = entry.getValue();
-            int pos = value/1000;
-            if(pos<99){
+            length += value;
+            int pos = value;
+            if (pos <= number) {
                 distribution[pos]++;
-                all++;
+                countInStatistics++;
             }
             if (max < value) {
                 max = value;
             }
         }
 
-
-
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
         BufferedWriter bw = null;
-        File f = new File("statistics/" +"benign-"+df.format(new Date()) + ".txt");
+        File f = new File("statistics/" + type + "-" + df.format(new Date()) + ".txt");
         try {
             if (!f.exists()) {
                 f.createNewFile();
@@ -232,21 +246,22 @@ public class CreateDict {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        bw.write("count = "+count+"\n");
-        bw.write("max = "+max+"\n");
+        bw.write("count = " + count + "\n");
+        bw.write("max = " + max + "\n");
 
-        for (int i =0;i<distribution.length;i++){
-            if(distribution[i]!=-1){
-                bw.write(i*1000+"~"+(i+1)*1000+": "+distribution[i]+"\n");
+        for (int i = 0; i < distribution.length; i++) {
+            if (distribution[i] != -1) {
+                bw.write(i +": " + distribution[i] + "\n");
             }
         }
-        bw.write("number of consideraion = "+ all);
+        bw.write("number of consideraion = " + countInStatistics+"\n");
+        bw.write("sum of all value = " + length+"\n");
         bw.close();
         return max;
     }
 
     public boolean shouldRemove(int value1, int value2) {
-        if (value1 - value2 < threshold) {
+        if ((value1 - value2) < number*0.2) {
             return true;
         }
         return false;
